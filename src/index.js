@@ -14,6 +14,10 @@ app.use(express.json());
 app.use(userRouter);
 app.use(userListRouter);
 
-app.listen(port, () => {
-  console.log(`Server is on port ${port}`);
+app.listen(process.env.PORT || 4000, function () {
+  console.log(
+    "Express server listening on port %d in %s mode",
+    this.address().port,
+    app.settings.env
+  );
 });
