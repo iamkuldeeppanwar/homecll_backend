@@ -8,6 +8,7 @@ const userListRouter = require("./router/usersList");
 const app = express();
 const port = process.env.PORT || 4000;
 
+//Add cors
 app.use(cors());
 app.use(express.json());
 app.use(userRouter);
