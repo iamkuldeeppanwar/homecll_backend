@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     ref: "Users",
   },
   createdAt: {
-    type: Date,
+    type: Date.split("T")[0],
     default: Date.now,
   },
 });
