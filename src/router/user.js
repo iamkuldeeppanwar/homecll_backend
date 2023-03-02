@@ -38,22 +38,25 @@ router.post("/users/login", async (req, res) => {
   } catch (err) {
     res.status(404).json({
       message: "Unable to login!",
-      error: err,
+      error: err.message,
     });
   }
 });
 
 router.post("/users/fpassword", async (req, res) => {
-  const email = req.body.email;
+  const { firstName, lastName, email } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ firstName, lastName, email });
     if (!user) {
       throw new Error("User not found");
     }
     sendForgetPasswordEmail(user.email);
     res.send(user);
   } catch (e) {
-    res.status(404).send(e);
+    res.status(404).json({
+      message: "Unable to Forget Password!",
+      error: err.message,
+    });
   }
 });
 
@@ -65,7 +68,10 @@ router.post("/users/Rpassword", async (req, res) => {
     await user.save();
     res.status(201).send(user);
   } catch (e) {
-    res.status(400).send(e);
+    res.status(400).json({
+      message: "Unable to Reset Password!",
+      error: err.message,
+    });
   }
 });
 
@@ -78,7 +84,10 @@ router.get("/users/me", async (req, res) => {
     }
     res.json(users);
   } catch (e) {
-    res.status(404).json(e);
+    res.status(404).json({
+      message: "Unable to Find User!",
+      error: err.message,
+    });
   }
 });
 
