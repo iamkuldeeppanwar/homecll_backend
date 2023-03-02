@@ -1,6 +1,7 @@
 const express = require("express");
 const router = new express.Router();
 const User = require("../model/user");
+const sendForgetPasswordEmail = require("../email/account");
 
 //Creating user
 router.post("/users", async (req, res) => {
@@ -34,19 +35,39 @@ router.post("/users/login", async (req, res) => {
       user,
       token,
     });
-  } catch (e) {
+  } catch (err) {
     res.status(404).json({
       message: "Unable to login!",
-      error: err.message,
+      error: err,
     });
   }
 });
 
-//Get All users
-// router.get("/getUsers", async function (req, res) {
-//   await res.json(userData);
-//   console.log(userData);
-// });
+router.post("/users/fpassword", async (req, res) => {
+  const email = req.body.email;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new Error("User not found");
+    }
+    sendForgetPasswordEmail(user.email);
+    res.send(user);
+  } catch (e) {
+    res.status(404).send(e);
+  }
+});
+
+router.post("/users/Rpassword", async (req, res) => {
+  const email = req.body.email;
+  try {
+    const user = await User.findOne({ email });
+    user.password = req.body.password;
+    await user.save();
+    res.status(201).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
 
 router.get("/users/me", async (req, res) => {
   try {
