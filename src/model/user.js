@@ -51,12 +51,6 @@ const userSchema = new mongoose.Schema({
   ],
 });
 
-userSchema.virtual("Userlist", {
-  ref: "Userlist",
-  localField: "_id",
-  foreignField: "owner",
-});
-
 //Generating user token
 userSchema.methods.generateAuthToken = async function () {
   const user = this;

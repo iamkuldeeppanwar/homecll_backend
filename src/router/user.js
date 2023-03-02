@@ -1,7 +1,6 @@
 const express = require("express");
 const router = new express.Router();
 const User = require("../model/user");
-// const userData = require("../data/userData");
 
 //Creating user
 router.post("/users", async (req, res) => {
@@ -14,11 +13,11 @@ router.post("/users", async (req, res) => {
       user,
       token,
     });
-  } catch (e) {
+  } catch (err) {
     res.status(400).json({
-      error: e,
+      message: "Unable to SignUP!",
+      error: err.message,
     });
-    console.log(e);
   }
 });
 
@@ -37,10 +36,9 @@ router.post("/users/login", async (req, res) => {
     });
   } catch (e) {
     res.status(404).json({
-      success: false,
       message: "Unable to login!",
+      error: err.message,
     });
-    console.log(e);
   }
 });
 
