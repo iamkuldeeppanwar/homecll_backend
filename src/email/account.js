@@ -12,7 +12,7 @@ const sendForgetPasswordEmail = (email) => {
       to: email,
       from: "kuldeeptesting27@gmail.com",
       subject: "Forget Password!",
-      html: '<a href = "https://relaxed-hoover-8d3f3d.netlify.app/#/newpassword">Click here</a> to forget your password',
+      html: '<a href = "http://localhost:3000/#/Rpassword">Click here</a> to forget your password',
     })
     .then((res) => {
       console.log("success");

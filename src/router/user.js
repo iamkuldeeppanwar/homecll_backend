@@ -2,6 +2,7 @@ const express = require("express");
 const router = new express.Router();
 const User = require("../model/user");
 const sendForgetPasswordEmail = require("../email/account");
+const auth = require("../middleware/auth");
 
 //Creating user
 router.post("/users", async (req, res) => {
@@ -23,7 +24,7 @@ router.post("/users", async (req, res) => {
 });
 
 //Login user
-router.post("/users/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const user = await User.findByCredentials(
       req.body.email,
@@ -43,10 +44,10 @@ router.post("/users/login", async (req, res) => {
   }
 });
 
-router.post("/users/fpassword", async (req, res) => {
-  const { firstName, lastName, email } = req.body;
+router.post("/fpassword", async (req, res) => {
+  const { email } = req.body;
   try {
-    const user = await User.findOne({ firstName, lastName, email });
+    const user = await User.findOne({ email });
     if (!user) {
       throw new Error("User not found");
     }
@@ -60,10 +61,10 @@ router.post("/users/fpassword", async (req, res) => {
   }
 });
 
-router.post("/users/Rpassword", async (req, res) => {
-  const email = req.body.email;
+router.post("/Rpassword", async (req, res) => {
+  const { firstName, lastName, email } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ firstName, lastName, email });
     user.password = req.body.password;
     await user.save();
     res.status(201).send(user);
@@ -75,9 +76,27 @@ router.post("/users/Rpassword", async (req, res) => {
   }
 });
 
-router.get("/users/me", async (req, res) => {
+router.post("/logout", auth, async (req, res) => {
   try {
-    const users = await User.find();
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+    res.json({
+      success: true,
+      user: req.user,
+    });
+  } catch (e) {
+    res.status(500).json({
+      message: "Unable to Logout!",
+      error: err.message,
+    });
+  }
+});
+
+router.get("/users/me/:id", async (req, res) => {
+  try {
+    const users = await User.findById(req.params);
 
     if (!users) {
       throw new Error("Users not found!");
