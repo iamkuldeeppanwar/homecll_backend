@@ -52,7 +52,7 @@ router.post("/users/fpassword", async (req, res) => {
     }
     sendForgetPasswordEmail(user.email);
     res.send(user);
-  } catch (e) {
+  } catch (err) {
     res.status(404).json({
       message: "Unable to Forget Password!",
       error: err.message,
@@ -67,7 +67,7 @@ router.post("/users/Rpassword", async (req, res) => {
     user.password = req.body.password;
     await user.save();
     res.status(201).send(user);
-  } catch (e) {
+  } catch (err) {
     res.status(400).json({
       message: "Unable to Reset Password!",
       error: err.message,
@@ -83,7 +83,7 @@ router.get("/users/me", async (req, res) => {
       throw new Error("Users not found!");
     }
     res.json(users);
-  } catch (e) {
+  } catch (err) {
     res.status(404).json({
       message: "Unable to Find User!",
       error: err.message,
